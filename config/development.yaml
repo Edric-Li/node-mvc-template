@@ -1,0 +1,19 @@
+port: 6022
+
+db:
+  host: localhost
+  username: thinknet
+  password: p2m13456
+  database: sxdqt_aladdin_dev
+  pool:
+    min: 0
+    max: 8
+    acquire: 60000
+    idle: 300
+  logging: false
+
+redis:
+  port: 63791
+  host: localhost
+  db: 1
+  retryStrategy: 0

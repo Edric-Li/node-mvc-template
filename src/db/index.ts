@@ -7,7 +7,7 @@ if (config.has('cls-hooked.namespace')) {
   Sequelize.useCLS(require('cls-hooked').createNamespace(config.get('cls-hooked.namespace')));
 }
 
-let sequelize: null | Sequelize;
+export let sequelize: Sequelize;
 
 function connect() {
   const logger = lo4js.getLogger('SERVER-DB');
@@ -23,4 +23,3 @@ function connect() {
 }
 
 connect();
-

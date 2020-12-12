@@ -1,10 +1,10 @@
-import Reflect from 'reflect-metadata';
+import 'reflect-metadata';
 import {NextFunction, Request, Response} from 'express';
 import glob from 'glob';
 import _ from 'lodash';
 import {resolve} from 'path';
 
-import LoggerDecorator,{Logger} from './log';
+import LoggerDecorator, {Logger} from './log';
 
 const PATH_PREFIX = Symbol('PATH_PREFIX');
 
@@ -49,7 +49,7 @@ class RouteManager {
   private readonly app: any;
   private readonly routesPath: string;
   private readonly routes: Route[];
-  private readonly iocContainer: WeakMap<Function, any>;
+  private readonly iocContainer: WeakMap<any, any>;
   private readonly restfulMap: Map<string, Parameter[]>;
 
   constructor(app: any, routesPath: string) {
@@ -97,8 +97,8 @@ class RouteManager {
     return instance;
   }
 
-  public getRestfulMap(target: Function, methodName: string | symbol): Parameter[] {
-    let cache: object[] | null = [];
+  public getRestfulMap(target: any, methodName: string | symbol): Parameter[] {
+    let cache: any[] | null = [];
     const key = JSON.stringify({target, methodName}, function (key, value) {
       if (typeof value === 'object' && value !== null) {
         if (cache?.includes(value)) {
@@ -147,13 +147,13 @@ class RouteManager {
             callback.bind(controller, ...parameters.concat([req, res, next]))
           );
           const times: number = new Date().getTime() - start.getTime();
-          this.logger.log(`Access api ${apiDescription} done during ${times / 1000}s`);
+          this.logger.info(`Access api ${apiDescription} done during ${times / 1000}s`);
         } catch (err) {
           if (err instanceof AuthError) {
-            this.logger.log(`Access api ${apiDescription} failed with auth error ${err.stack}`);
+            this.logger.info(`Access api ${apiDescription} failed with auth error ${err.stack}`);
             res.status(401).send(err.message);
           } else {
-            this.logger.log(`Access api ${apiDescription} failed with error ${err.stack}`);
+            this.logger.info(`Access api ${apiDescription} failed with error ${err.stack}`);
             res.status(500).send(err.message);
           }
         }
@@ -177,7 +177,7 @@ export function Controller(prefix = ''): any {
   };
 }
 
-export function Service(target: Function | any) {
+export function Service(target: any) {
   manger?.recurInject(target);
 }
 
@@ -201,7 +201,8 @@ export function Patch(path: string, options?: Options): any {
   return manger?.registerRoute.bind(manger, ['patch', path, options]);
 }
 
-export function Autowired(target: any, propKey: string) {
+export function Autowired(target: any, propKey: string): any {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   target[propKey] = manger?.recurInject(Reflect.getMetadata('design:type', target, propKey));
 }
@@ -210,7 +211,7 @@ export function PathVariable(name: string): any {
   return manger?.checkAndSetParameters.bind(manger, name, ParameterType.params);
 }
 
-export function Body(name: string) {
+export function Body(name: string): any {
   return manger?.checkAndSetParameters.bind(manger, name, ParameterType.body);
 }
 
@@ -222,18 +223,4 @@ export interface Roles {
 
 export interface User {
   id: number;
-  displayName: string;
-  isAuthenticated: boolean;
-  XTid?: number;
-  code?: string;
-  name: string;
-  avatar?: string;
-  roles: Roles[];
-  OrganizationId: number;
-  OrganizationName?: string;
-  OrganizationPath?: string;
-  OrganizationLevel?: number;
-  PartyOrganizationId?: number;
-  LeagueOrganizationId?: number;
-  UnionOrganizationId?: number;
 }

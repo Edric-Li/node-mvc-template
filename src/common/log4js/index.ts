@@ -1,12 +1,12 @@
-import log4js from "log4js";
+import log4js from 'log4js';
 
 log4js.configure({
   appenders: {
-    consoleout: { type: "console" }
+    consoleout: {type: 'console'},
   },
   categories: {
-    default: { appenders: [ "consoleout" ], "level": "debug" }
-  }
+    default: {appenders: ['consoleout'], level: 'debug'},
+  },
 });
 export default log4js;
 export * from 'log4js';
